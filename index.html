@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#c2410c">
+    <meta name="description" content="Ein persönliches Stimmungstagebuch.">
+    <title>Stimmungstagebuch.ch</title>
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <div class="title" data-i18n="app.title">Stimmungstagebuch.ch</div>
+        <div class="subtitle" data-i18n="app.subtitle">Stimmung bewusst wahrnehmen</div>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Hauptnavigation" data-i18n-aria-label="nav.label">
+      <button class="tab active" type="button" data-view="today" aria-current="page" data-i18n="nav.today">Heute</button>
+      <button class="tab" type="button" data-view="history" data-i18n="nav.history">Verlauf</button>
+      <button class="tab" type="button" data-view="calendar" data-i18n="nav.calendar">Kalender</button>
+      <button class="tab" type="button" data-view="stats" data-i18n="nav.stats">Statistik</button>
+      <button class="tab" type="button" data-view="settings" data-i18n="nav.settings">Einstellungen</button>
+    </nav>
+
+    <main>
+      <section id="today" class="view active" aria-labelledby="today-heading">
+        <div class="card">
+          <h1 id="today-heading" data-i18n="today.heading">Dein Tag</h1>
+          <p id="app-message" class="app-message" role="alert" hidden></p>
+          <p class="info-hint" data-i18n="today.draftNotice">Deine Angaben werden lokal in diesem Browser gespeichert.</p>
+
+          <div class="grid">
+            <div class="field full">
+              <label for="entry-date" data-i18n="today.date">Datum</label>
+              <input id="entry-date" name="date" type="date">
+            </div>
+
+            <fieldset class="field full scale-field">
+              <legend data-i18n="today.mood">Wie ist deine Stimmung?</legend>
+              <div class="scale-heading">
+                <span class="small" data-i18n="today.chooseMood">Wähle einen Wert von 1 bis 5</span>
+                <output id="mood-value" class="scale-value selected" for="mood">3</output>
+              </div>
+              <input id="mood" class="range" type="range" min="1" max="5" step="1" value="3" aria-describedby="mood-labels">
+              <div id="mood-labels" class="scale-labels mood-scale-labels">
+                <span data-i18n="scale.mood1">1 · Sehr schlecht</span>
+                <span data-i18n="scale.mood2">2 · Eher schlecht</span>
+                <span data-i18n="scale.mood3">3 · Mittel</span>
+                <span data-i18n="scale.mood4">4 · Gut</span>
+                <span data-i18n="scale.mood5">5 · Sehr gut</span>
+              </div>
+            </fieldset>
+
+            <fieldset class="field full scale-field">
+              <legend data-i18n="today.energy">Energie</legend>
+              <div class="scale-heading">
+                <label class="optional-toggle" for="energy-enabled">
+                  <input id="energy-enabled" type="checkbox" data-scale-toggle="energy">
+                  <span data-i18n="today.enterValue">Wert erfassen</span>
+                </label>
+                <output id="energy-value" class="scale-value" for="energy" data-i18n="scale.notSelected">—</output>
+              </div>
+              <input id="energy" class="range" type="range" min="1" max="5" step="1" value="3" data-optional-scale disabled aria-describedby="energy-labels">
+              <div id="energy-labels" class="scale-labels">
+                <span data-i18n="scale.low">1 · Niedrig</span>
+                <span data-i18n="scale.mediumShort">3 · Mittel</span>
+                <span data-i18n="scale.high">5 · Hoch</span>
+              </div>
+            </fieldset>
+
+            <fieldset class="field full scale-field">
+              <legend data-i18n="today.tension">Angst / Anspannung</legend>
+              <div class="scale-heading">
+                <label class="optional-toggle" for="tension-enabled">
+                  <input id="tension-enabled" type="checkbox" data-scale-toggle="tension">
+                  <span data-i18n="today.enterValue">Wert erfassen</span>
+                </label>
+                <output id="tension-value" class="scale-value" for="tension" data-i18n="scale.notSelected">—</output>
+              </div>
+              <input id="tension" class="range" type="range" min="1" max="5" step="1" value="3" data-optional-scale disabled aria-describedby="tension-labels">
+              <div id="tension-labels" class="scale-labels">
+                <span data-i18n="scale.low">1 · Niedrig</span>
+                <span data-i18n="scale.mediumShort">3 · Mittel</span>
+                <span data-i18n="scale.high">5 · Hoch</span>
+              </div>
+            </fieldset>
+
+            <fieldset class="field full scale-field">
+              <legend data-i18n="today.sleep">Schlafqualität</legend>
+              <div class="scale-heading">
+                <label class="optional-toggle" for="sleep-enabled">
+                  <input id="sleep-enabled" type="checkbox" data-scale-toggle="sleep">
+                  <span data-i18n="today.enterValue">Wert erfassen</span>
+                </label>
+                <output id="sleep-value" class="scale-value" for="sleep" data-i18n="scale.notSelected">—</output>
+              </div>
+              <input id="sleep" class="range" type="range" min="1" max="5" step="1" value="3" data-optional-scale disabled aria-describedby="sleep-labels">
+              <div id="sleep-labels" class="scale-labels">
+                <span data-i18n="scale.low">1 · Niedrig</span>
+                <span data-i18n="scale.mediumShort">3 · Mittel</span>
+                <span data-i18n="scale.high">5 · Hoch</span>
+              </div>
+            </fieldset>
+
+            <div class="field full">
+              <label for="notes" data-i18n="today.notes">Notizen (optional)</label>
+              <textarea id="notes" name="notes" rows="4" maxlength="2000" data-i18n-placeholder="today.notesPlaceholder" placeholder="Was möchtest du festhalten?"></textarea>
+              <div class="small character-count"><span id="notes-count">0</span> / 2000 <span data-i18n="today.characters">Zeichen</span></div>
+            </div>
+
+            <div class="field full">
+              <label for="medications" data-i18n="today.medications">Medikamente und Änderungen</label>
+              <p id="medications-help" class="small field-help" data-i18n="today.medicationsHelp">Optional: Medikamente, Dosisänderungen, Beginn oder Absetzen sowie ausgelassene Einnahmen notieren.</p>
+              <textarea id="medications" name="medications" rows="4" maxlength="2000" aria-describedby="medications-help" data-i18n-placeholder="today.medicationsPlaceholder" placeholder="Deine Notizen zu Medikamenten (optional)"></textarea>
+              <div class="small character-count"><span id="medications-count">0</span> / 2000 <span data-i18n="today.characters">Zeichen</span></div>
+            </div>
+
+            <div class="field full save-entry">
+              <button id="save-entry" class="primary" type="button" data-i18n="today.saveEntry">Eintrag speichern</button>
+              <button id="delete-entry" class="secondary danger" type="button" hidden data-i18n="today.deleteEntry">Eintrag löschen</button>
+              <p id="save-status" class="small" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="history" class="view" aria-labelledby="history-heading" hidden>
+        <div class="card">
+          <h1 id="history-heading" data-i18n="history.heading">Verlauf</h1>
+          <div id="history-list"></div>
+        </div>
+      </section>
+
+      <section id="calendar" class="view" aria-labelledby="calendar-heading" hidden>
+        <div class="card">
+          <h1 id="calendar-heading" data-i18n="calendar.heading">Kalender</h1>
+          <div class="calendar-toolbar">
+            <button id="calendar-prev" class="secondary" type="button" data-i18n-aria-label="calendar.previous">‹</button>
+            <h2 id="calendar-month" class="calendar-month"></h2>
+            <button id="calendar-next" class="secondary" type="button" data-i18n-aria-label="calendar.next">›</button>
+          </div>
+          <div id="calendar-grid" class="calendar-grid" aria-label="Kalender" data-i18n-aria-label="calendar.gridLabel"></div>
+          <p id="calendar-empty" class="empty" data-i18n="empty.calendar">Noch keine Einträge vorhanden.</p>
+        </div>
+      </section>
+
+      <section id="stats" class="view" aria-labelledby="stats-heading" hidden>
+        <div class="card">
+          <h1 id="stats-heading" data-i18n="stats.heading">Statistik</h1>
+          <div class="stats-controls">
+            <div class="field">
+              <label for="stats-range" data-i18n="stats.period">Zeitraum</label>
+              <select id="stats-range">
+                <option value="14" data-i18n="stats.last14">Letzte 14 Tage</option>
+                <option value="30" data-i18n="stats.last30">Letzte 30 Tage</option>
+                <option value="90" data-i18n="stats.last90">Letzte 90 Tage</option>
+                <option value="6months" data-i18n="stats.last6months">Letzte 6 Monate</option>
+                <option value="12months" data-i18n="stats.last12months">Letzte 12 Monate</option>
+                <option value="custom" data-i18n="stats.custom">Benutzerdefiniert</option>
+              </select>
+            </div>
+            <div id="stats-custom-dates" class="stats-custom-dates" hidden>
+              <div class="field">
+                <label for="stats-start" data-i18n="stats.startDate">Startdatum</label>
+                <input id="stats-start" type="date">
+              </div>
+              <div class="field">
+                <label for="stats-end" data-i18n="stats.endDate">Enddatum</label>
+                <input id="stats-end" type="date">
+              </div>
+            </div>
+          </div>
+          <p id="stats-error" class="stats-error" role="alert" hidden></p>
+          <p id="stats-period-summary" class="small stats-period-summary"></p>
+          <p id="stats-invalid-count" class="small stats-warning" hidden></p>
+          <div id="stats-empty" class="empty" data-i18n="stats.emptyPeriod">Für diesen Zeitraum sind keine Stimmungseinträge vorhanden.</div>
+
+          <div id="stats-results" hidden>
+            <section aria-labelledby="stats-summary-heading">
+              <h2 id="stats-summary-heading" data-i18n="stats.summaryTitle">Zusammenfassung</h2>
+              <dl class="stats-summary">
+                <div class="stat"><dt data-i18n="stats.entries">Stimmungseinträge</dt><dd id="stat-entry-count"></dd></div>
+                <div class="stat"><dt data-i18n="stats.average">Durchschnittliche Stimmung</dt><dd id="stat-average"></dd></div>
+                <div class="stat"><dt data-i18n="stats.highest">Höchster Wert</dt><dd id="stat-highest"></dd></div>
+                <div class="stat"><dt data-i18n="stats.lowest">Niedrigster Wert</dt><dd id="stat-lowest"></dd></div>
+                <div class="stat"><dt data-i18n="stats.calendarDays">Kalendertage im Zeitraum</dt><dd id="stat-day-count"></dd></div>
+                <div class="stat"><dt data-i18n="stats.daysWithEntry">Tage mit Eintrag</dt><dd id="stat-days-with-entry"></dd></div>
+              </dl>
+            </section>
+
+            <section class="chart-section" aria-labelledby="mood-chart-heading">
+              <h2 id="mood-chart-heading" data-i18n="stats.moodChartTitle">Stimmungsverlauf</h2>
+              <p class="small" data-i18n="stats.gapsHelp">Linien verbinden nur Einträge an aufeinanderfolgenden Tagen; Lücken bedeuten Tage ohne Eintrag.</p>
+              <div id="mood-chart" class="chart"></div>
+              <details class="data-details">
+                <summary data-i18n="stats.showData">Messwerte als Tabelle anzeigen</summary>
+                <div class="table-scroll">
+                  <table>
+                    <thead><tr><th data-i18n="stats.date">Datum</th><th data-i18n="stats.mood">Stimmung</th></tr></thead>
+                    <tbody id="mood-data-table"></tbody>
+                  </table>
+                </div>
+              </details>
+            </section>
+
+            <section id="optional-stats" class="chart-section" aria-labelledby="optional-stats-heading">
+              <h2 id="optional-stats-heading" data-i18n="stats.optionalTitle">Optionale Skalen</h2>
+              <p class="small" data-i18n="stats.optionalHelp">Durchschnitte berücksichtigen nur tatsächlich erfasste Werte.</p>
+              <div class="optional-stat-grid">
+                <article class="optional-stat" data-optional-stat="energy">
+                  <h3 data-i18n="stats.energy">Energie</h3>
+                  <p><span data-i18n="stats.averageShort">Durchschnitt</span>: <strong id="average-energy"></strong></p>
+                  <p class="small" data-i18n="stats.noOptionalEnergy" data-empty-optional="energy"></p>
+                  <div class="sparkline" id="chart-energy"></div>
+                </article>
+                <article class="optional-stat" data-optional-stat="tension">
+                  <h3 data-i18n="stats.tension">Anspannung</h3>
+                  <p><span data-i18n="stats.averageShort">Durchschnitt</span>: <strong id="average-tension"></strong></p>
+                  <p class="small" data-i18n="stats.noOptionalTension" data-empty-optional="tension"></p>
+                  <div class="sparkline" id="chart-tension"></div>
+                </article>
+                <article class="optional-stat" data-optional-stat="sleepQuality">
+                  <h3 data-i18n="stats.sleepQuality">Schlafqualität</h3>
+                  <p><span data-i18n="stats.averageShort">Durchschnitt</span>: <strong id="average-sleepQuality"></strong></p>
+                  <p class="small" data-i18n="stats.noOptionalSleep" data-empty-optional="sleepQuality"></p>
+                  <div class="sparkline" id="chart-sleepQuality"></div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="settings" class="view" aria-labelledby="settings-heading" hidden>
+        <div class="card">
+          <h1 id="settings-heading" data-i18n="settings.heading">Einstellungen</h1>
+          <div class="field">
+            <label for="language" data-i18n="settings.language">Sprache</label>
+            <select id="language" name="language">
+              <option value="de">Deutsch</option>
+              <option value="fr">Français</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div class="settings-data">
+            <h2 data-i18n="settings.data">Datensicherung</h2>
+            <p class="small" data-i18n="settings.backupHelp">Sichere deine Einträge als JSON-Datei oder ersetze den gesamten Eintragsbestand aus einer Sicherung.</p>
+            <button id="export-data" class="secondary" type="button" data-i18n="settings.export">JSON-Sicherung exportieren</button>
+            <label for="import-file" class="file-label" data-i18n="settings.import">JSON-Sicherung importieren</label>
+            <input id="import-file" type="file" accept="application/json,.json">
+          </div>
+          <p id="settings-message" class="small" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
