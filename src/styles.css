@@ -209,6 +209,23 @@ textarea {
   gap: 12px;
 }
 
+.scale-toggle {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.scale-toggle input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--accent);
+}
+
 .scale-options {
   display: flex;
   width: 100%;
@@ -294,6 +311,10 @@ input.range {
   background: transparent;
   cursor: pointer;
   touch-action: pan-y;
+}
+
+input.optional-range:disabled {
+  opacity: 0.55;
 }
 
 .range:disabled {

@@ -62,7 +62,8 @@ export function initializeApp({ translations, localeByLanguage }) {
   const medicationsInput = document.querySelector("#medications");
   const notesCount = document.querySelector("#notes-count");
   const medicationsCount = document.querySelector("#medications-count");
-  const optionalScales = document.querySelectorAll("input[data-optional-scale]");
+  const optionalScales = document.querySelectorAll("input[data-optional-range]");
+  const optionalScaleToggles = document.querySelectorAll("input[data-scale-enabled]");
   const saveButton = document.querySelector("#save-entry");
   const deleteButton = document.querySelector("#delete-entry");
   const saveStatus = document.querySelector("#save-status");
@@ -135,10 +136,9 @@ export function initializeApp({ translations, localeByLanguage }) {
       medications: medicationsInput.value,
     };
     for (const [id, field] of Object.entries(optionalFields)) {
-      const selected = document.querySelector(
-        `[data-scale-group="${id}"] input[data-optional-scale]:checked`,
-      );
-      data[field] = selected ? Number(selected.value) : null;
+      const selected = document.querySelector(`[data-scale-enabled="${id}"]`).checked;
+      const scale = document.querySelector(`[data-optional-range="${id}"]`);
+      data[field] = selected ? Number(scale.value) : null;
     }
     return data;
   }
@@ -165,13 +165,19 @@ export function initializeApp({ translations, localeByLanguage }) {
   }
 
   function updateOptionalScale(groupId) {
-    const selected = document.querySelector(
-      `[data-scale-group="${groupId}"] input[data-optional-scale]:checked`,
-    );
+    const toggle = document.querySelector(`[data-scale-enabled="${groupId}"]`);
+    const scale = document.querySelector(`[data-optional-range="${groupId}"]`);
     const output = document.querySelector(`#${groupId}-value`);
-    output.value = selected ? selected.value : translate("scale.notSelected");
+    scale.disabled = !toggle.checked;
+    output.value = toggle.checked ? scale.value : translate("scale.notSelected");
     output.textContent = output.value;
-    output.classList.toggle("selected", Boolean(selected));
+    output.classList.toggle("selected", toggle.checked);
+    scale.setAttribute(
+      "aria-label",
+      `${document.querySelector(`#${groupId}-legend`).textContent}: ${
+        toggle.checked ? `${scale.value} / 5` : translate("scale.notSelected")
+      }`,
+    );
   }
 
   function setForm(entry, date) {
@@ -182,11 +188,8 @@ export function initializeApp({ translations, localeByLanguage }) {
 
     for (const [id, field] of Object.entries(optionalFields)) {
       const value = entry?.[field] ?? null;
-      document
-        .querySelectorAll(`[data-scale-group="${id}"] input[data-optional-scale]`)
-        .forEach((option) => {
-          option.checked = value !== null && Number(option.value) === value;
-        });
+      document.querySelector(`[data-scale-enabled="${id}"]`).checked = value !== null;
+      document.querySelector(`[data-optional-range="${id}"]`).value = String(value ?? 3);
       updateOptionalScale(id);
     }
 
@@ -646,7 +649,7 @@ export function initializeApp({ translations, localeByLanguage }) {
       element.setAttribute("aria-label", translate(element.dataset.i18nAriaLabel));
     });
     updateMoodOutput();
-    optionalScales.forEach((scale) => updateOptionalScale(scale.name));
+    optionalScales.forEach((scale) => updateOptionalScale(scale.dataset.optionalRange));
     renderHistory();
     renderCalendar();
     renderStatistics();
@@ -858,9 +861,15 @@ export function initializeApp({ translations, localeByLanguage }) {
     updateMoodOutput();
     clearSaveStatus();
   });
+  optionalScaleToggles.forEach((toggle) => {
+    toggle.addEventListener("change", () => {
+      updateOptionalScale(toggle.dataset.scaleEnabled);
+      clearSaveStatus();
+    });
+  });
   optionalScales.forEach((scale) => {
-    scale.addEventListener("change", () => {
-      updateOptionalScale(scale.name);
+    scale.addEventListener("input", () => {
+      updateOptionalScale(scale.dataset.optionalRange);
       clearSaveStatus();
     });
   });

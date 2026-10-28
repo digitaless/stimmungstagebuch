@@ -55,46 +55,31 @@
             <fieldset class="field full scale-field" data-scale-group="energy">
               <legend id="energy-legend" data-i18n="today.energy">Energie</legend>
               <div class="scale-heading">
-                <output id="energy-value" class="scale-value" for="energy" data-i18n="scale.notSelected">—</output>
+                <output id="energy-value" class="scale-value" for="energy-range" data-i18n="scale.notSelected">—</output>
               </div>
-              <div class="scale-options" role="radiogroup" aria-labelledby="energy-legend">
-                <label class="scale-option"><input type="radio" name="energy" value="1" data-optional-scale aria-describedby="energy-labels"><span>1</span></label>
-                <label class="scale-option"><input type="radio" name="energy" value="2" data-optional-scale aria-describedby="energy-labels"><span>2</span></label>
-                <label class="scale-option"><input type="radio" name="energy" value="3" data-optional-scale aria-describedby="energy-labels"><span>3</span></label>
-                <label class="scale-option"><input type="radio" name="energy" value="4" data-optional-scale aria-describedby="energy-labels"><span>4</span></label>
-                <label class="scale-option"><input type="radio" name="energy" value="5" data-optional-scale aria-describedby="energy-labels"><span>5</span></label>
-              </div>
-              <div id="energy-labels" class="scale-labels"><span data-i18n="scale.low">1 · Niedrig</span><span data-i18n="scale.ratherLow">2 · Eher niedrig</span><span data-i18n="scale.mediumShort">3 · Mittel</span><span data-i18n="scale.ratherHigh">4 · Eher hoch</span><span data-i18n="scale.high">5 · Hoch</span></div>
+              <label class="scale-toggle"><input type="checkbox" data-scale-enabled="energy"><span data-i18n="scale.record">Wert erfassen</span></label>
+              <input id="energy-range" class="range optional-range" type="range" min="1" max="5" step="1" value="3" data-optional-range="energy" aria-labelledby="energy-legend" aria-describedby="energy-labels" disabled>
+              <div id="energy-labels" class="scale-labels mood-scale-labels"><span data-i18n="scale.low">1 · Niedrig</span><span data-i18n="scale.ratherLow">2 · Eher niedrig</span><span data-i18n="scale.mediumShort">3 · Mittel</span><span data-i18n="scale.ratherHigh">4 · Eher hoch</span><span data-i18n="scale.high">5 · Hoch</span></div>
             </fieldset>
 
             <fieldset class="field full scale-field" data-scale-group="tension">
               <legend id="tension-legend" data-i18n="today.tension">Angst / Anspannung</legend>
               <div class="scale-heading">
-                <output id="tension-value" class="scale-value" for="tension" data-i18n="scale.notSelected">—</output>
+                <output id="tension-value" class="scale-value" for="tension-range" data-i18n="scale.notSelected">—</output>
               </div>
-              <div class="scale-options" role="radiogroup" aria-labelledby="tension-legend">
-                <label class="scale-option"><input type="radio" name="tension" value="1" data-optional-scale aria-describedby="tension-labels"><span>1</span></label>
-                <label class="scale-option"><input type="radio" name="tension" value="2" data-optional-scale aria-describedby="tension-labels"><span>2</span></label>
-                <label class="scale-option"><input type="radio" name="tension" value="3" data-optional-scale aria-describedby="tension-labels"><span>3</span></label>
-                <label class="scale-option"><input type="radio" name="tension" value="4" data-optional-scale aria-describedby="tension-labels"><span>4</span></label>
-                <label class="scale-option"><input type="radio" name="tension" value="5" data-optional-scale aria-describedby="tension-labels"><span>5</span></label>
-              </div>
-              <div id="tension-labels" class="scale-labels"><span data-i18n="scale.low">1 · Niedrig</span><span data-i18n="scale.ratherLow">2 · Eher niedrig</span><span data-i18n="scale.mediumShort">3 · Mittel</span><span data-i18n="scale.ratherHigh">4 · Eher hoch</span><span data-i18n="scale.high">5 · Hoch</span></div>
+              <label class="scale-toggle"><input type="checkbox" data-scale-enabled="tension"><span data-i18n="scale.record">Wert erfassen</span></label>
+              <input id="tension-range" class="range optional-range" type="range" min="1" max="5" step="1" value="3" data-optional-range="tension" aria-labelledby="tension-legend" aria-describedby="tension-labels" disabled>
+              <div id="tension-labels" class="scale-labels mood-scale-labels"><span data-i18n="scale.low">1 · Niedrig</span><span data-i18n="scale.ratherLow">2 · Eher niedrig</span><span data-i18n="scale.mediumShort">3 · Mittel</span><span data-i18n="scale.ratherHigh">4 · Eher hoch</span><span data-i18n="scale.high">5 · Hoch</span></div>
             </fieldset>
 
             <fieldset class="field full scale-field" data-scale-group="sleep">
               <legend id="sleep-legend" data-i18n="today.sleep">Schlafqualität</legend>
               <div class="scale-heading">
-                <output id="sleep-value" class="scale-value" for="sleep" data-i18n="scale.notSelected">—</output>
+                <output id="sleep-value" class="scale-value" for="sleep-range" data-i18n="scale.notSelected">—</output>
               </div>
-              <div class="scale-options" role="radiogroup" aria-labelledby="sleep-legend">
-                <label class="scale-option"><input type="radio" name="sleep" value="1" data-optional-scale aria-describedby="sleep-labels"><span>1</span></label>
-                <label class="scale-option"><input type="radio" name="sleep" value="2" data-optional-scale aria-describedby="sleep-labels"><span>2</span></label>
-                <label class="scale-option"><input type="radio" name="sleep" value="3" data-optional-scale aria-describedby="sleep-labels"><span>3</span></label>
-                <label class="scale-option"><input type="radio" name="sleep" value="4" data-optional-scale aria-describedby="sleep-labels"><span>4</span></label>
-                <label class="scale-option"><input type="radio" name="sleep" value="5" data-optional-scale aria-describedby="sleep-labels"><span>5</span></label>
-              </div>
-              <div id="sleep-labels" class="scale-labels"><span data-i18n="scale.low">1 · Niedrig</span><span data-i18n="scale.ratherLow">2 · Eher niedrig</span><span data-i18n="scale.mediumShort">3 · Mittel</span><span data-i18n="scale.ratherHigh">4 · Eher hoch</span><span data-i18n="scale.high">5 · Hoch</span></div>
+              <label class="scale-toggle"><input type="checkbox" data-scale-enabled="sleep"><span data-i18n="scale.record">Wert erfassen</span></label>
+              <input id="sleep-range" class="range optional-range" type="range" min="1" max="5" step="1" value="3" data-optional-range="sleep" aria-labelledby="sleep-legend" aria-describedby="sleep-labels" disabled>
+              <div id="sleep-labels" class="scale-labels mood-scale-labels"><span data-i18n="scale.low">1 · Niedrig</span><span data-i18n="scale.ratherLow">2 · Eher niedrig</span><span data-i18n="scale.mediumShort">3 · Mittel</span><span data-i18n="scale.ratherHigh">4 · Eher hoch</span><span data-i18n="scale.high">5 · Hoch</span></div>
             </fieldset>
 
             <div class="field full">
