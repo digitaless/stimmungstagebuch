@@ -9,9 +9,10 @@ import {
   calculateStatistics,
   getConsecutiveSegments,
   getPeriodForPreset,
-  localDateString as statisticsDateString,
   validatePeriod,
 } from "./statistics.js";
+import { createMoodReport, presentPdfReport } from "./pdf-report.js";
+import { hasDismissedIntro, saveIntroDismissal } from "./onboarding.js";
 
 const viewIds = ["today", "history", "calendar", "stats", "settings"];
 const weekdayKeys = [
@@ -61,12 +62,17 @@ export function initializeApp({ translations, localeByLanguage }) {
   const medicationsInput = document.querySelector("#medications");
   const notesCount = document.querySelector("#notes-count");
   const medicationsCount = document.querySelector("#medications-count");
-  const optionalScales = document.querySelectorAll("[data-optional-scale]");
+  const optionalScales = document.querySelectorAll("input[data-optional-scale]");
   const saveButton = document.querySelector("#save-entry");
   const deleteButton = document.querySelector("#delete-entry");
   const saveStatus = document.querySelector("#save-status");
   const appMessage = document.querySelector("#app-message");
   const settingsMessage = document.querySelector("#settings-message");
+  const pdfStatus = document.querySelector("#pdf-status");
+  const introDialog = document.querySelector("#intro-dialog");
+  const introDismiss = document.querySelector("#intro-dismiss");
+  const introClose = document.querySelector("#intro-close");
+  const introStatus = document.querySelector("#intro-status");
   const historyList = document.querySelector("#history-list");
   const calendarGrid = document.querySelector("#calendar-grid");
   const calendarEmpty = document.querySelector("#calendar-empty");
@@ -129,9 +135,10 @@ export function initializeApp({ translations, localeByLanguage }) {
       medications: medicationsInput.value,
     };
     for (const [id, field] of Object.entries(optionalFields)) {
-      const scale = document.querySelector(`#${id}`);
-      const toggle = document.querySelector(`[data-scale-toggle="${id}"]`);
-      data[field] = toggle.checked ? Number(scale.value) : null;
+      const selected = document.querySelector(
+        `[data-scale-group="${id}"] input[data-optional-scale]:checked`,
+      );
+      data[field] = selected ? Number(selected.value) : null;
     }
     return data;
   }
@@ -157,20 +164,14 @@ export function initializeApp({ translations, localeByLanguage }) {
     );
   }
 
-  function updateOptionalScale(scale) {
-    const output = document.querySelector(`#${scale.id}-value`);
-    const isEnabled = document.querySelector(
-      `[data-scale-toggle="${scale.id}"]`,
-    ).checked;
-    output.value = isEnabled ? scale.value : translate("scale.notSelected");
-    output.textContent = output.value;
-    output.classList.toggle("selected", isEnabled);
-    scale.setAttribute(
-      "aria-label",
-      `${scale.closest("fieldset").querySelector("legend").textContent}: ${
-        isEnabled ? scale.value : translate("scale.notSelected")
-      } / 5`,
+  function updateOptionalScale(groupId) {
+    const selected = document.querySelector(
+      `[data-scale-group="${groupId}"] input[data-optional-scale]:checked`,
     );
+    const output = document.querySelector(`#${groupId}-value`);
+    output.value = selected ? selected.value : translate("scale.notSelected");
+    output.textContent = output.value;
+    output.classList.toggle("selected", Boolean(selected));
   }
 
   function setForm(entry, date) {
@@ -180,13 +181,13 @@ export function initializeApp({ translations, localeByLanguage }) {
     updateMoodOutput();
 
     for (const [id, field] of Object.entries(optionalFields)) {
-      const scale = document.querySelector(`#${id}`);
-      const toggle = document.querySelector(`[data-scale-toggle="${id}"]`);
       const value = entry?.[field] ?? null;
-      toggle.checked = value !== null;
-      scale.disabled = value === null;
-      scale.value = String(value ?? 3);
-      updateOptionalScale(scale);
+      document
+        .querySelectorAll(`[data-scale-group="${id}"] input[data-optional-scale]`)
+        .forEach((option) => {
+          option.checked = value !== null && Number(option.value) === value;
+        });
+      updateOptionalScale(id);
     }
 
     notesInput.value = entry?.notes ?? "";
@@ -570,6 +571,68 @@ export function initializeApp({ translations, localeByLanguage }) {
     }
   }
 
+  function showPdfStatus(key) {
+    pdfStatus.dataset.messageKey = key;
+    pdfStatus.textContent = translate(key);
+  }
+
+  function exportStatisticsPdf() {
+    if (!storageReady) {
+      showPdfStatus("settings.storageFailed");
+      return;
+    }
+
+    try {
+      const period =
+        statsRange.value === "custom"
+          ? validatePeriod(statsStart.value, statsEnd.value)
+          : getPeriodForPreset(statsRange.value, localDateString(new Date()));
+      const statistics = calculateStatistics(entries, period.startDate, period.endDate);
+      if (!statistics.entryCount) {
+        showPdfStatus("pdf.emptyPeriod");
+        return;
+      }
+
+      const report = createMoodReport(
+        statistics,
+        language,
+        translations,
+        localeByLanguage,
+      );
+      showPdfStatus(
+        presentPdfReport(report) === "opened" ? "pdf.opened" : "pdf.downloaded",
+      );
+    } catch (error) {
+      const key =
+        error?.code === "invalid_period"
+          ? "stats.invalidPeriod"
+          : error?.code === "invalid_date"
+            ? "stats.invalidDate"
+            : "pdf.createFailed";
+      showPdfStatus(key);
+    }
+  }
+
+  function showIntroIfNeeded() {
+    try {
+      if (hasDismissedIntro(window.localStorage)) return;
+    } catch {
+      introStatus.dataset.messageKey = "intro.storageReadFailed";
+      introStatus.textContent = translate("intro.storageReadFailed");
+      introStatus.hidden = false;
+    }
+    introDialog.showModal();
+    introClose.focus();
+  }
+
+  function rememberIntroChoice() {
+    try {
+      saveIntroDismissal(window.localStorage, introDismiss.checked);
+    } catch {
+      showAppMessage("intro.storageSaveFailed");
+    }
+  }
+
   function updateTranslations() {
     document.documentElement.lang = language;
     document.title = `${translate("app.title")} — ${translate("today.heading")}`;
@@ -583,7 +646,7 @@ export function initializeApp({ translations, localeByLanguage }) {
       element.setAttribute("aria-label", translate(element.dataset.i18nAriaLabel));
     });
     updateMoodOutput();
-    optionalScales.forEach(updateOptionalScale);
+    optionalScales.forEach((scale) => updateOptionalScale(scale.name));
     renderHistory();
     renderCalendar();
     renderStatistics();
@@ -596,6 +659,9 @@ export function initializeApp({ translations, localeByLanguage }) {
     }
     if (settingsMessage.dataset.messageKey) {
       settingsMessage.textContent = translate(settingsMessage.dataset.messageKey);
+    }
+    if (pdfStatus.dataset.messageKey) {
+      pdfStatus.textContent = translate(pdfStatus.dataset.messageKey);
     }
   }
 
@@ -793,17 +859,10 @@ export function initializeApp({ translations, localeByLanguage }) {
     clearSaveStatus();
   });
   optionalScales.forEach((scale) => {
-    scale.addEventListener("input", () => {
-      updateOptionalScale(scale);
+    scale.addEventListener("change", () => {
+      updateOptionalScale(scale.name);
       clearSaveStatus();
     });
-    document
-      .querySelector(`[data-scale-toggle="${scale.id}"]`)
-      .addEventListener("change", (event) => {
-        scale.disabled = !event.currentTarget.checked;
-        updateOptionalScale(scale);
-        clearSaveStatus();
-      });
   });
   notesInput.addEventListener("input", () => {
     notesCount.textContent = String(notesInput.value.length);
@@ -854,7 +913,10 @@ export function initializeApp({ translations, localeByLanguage }) {
   statsStart.addEventListener("change", renderStatistics);
   statsEnd.addEventListener("change", renderStatistics);
   document.querySelector("#export-data").addEventListener("click", handleExport);
+  document.querySelector("#export-pdf").addEventListener("click", exportStatisticsPdf);
   importFile.addEventListener("change", handleImport);
+  introClose.addEventListener("click", () => introDialog.close());
+  introDialog.addEventListener("close", rememberIntroChoice);
 
   setForm(entries.find((entry) => entry.date === currentDate), currentDate);
   saveButton.disabled = !storageReady;
@@ -863,4 +925,5 @@ export function initializeApp({ translations, localeByLanguage }) {
   renderHistory();
   renderCalendar();
   showView("today");
+  showIntroIfNeeded();
 }

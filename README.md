@@ -37,7 +37,9 @@ Die Website wird über GitHub Pages veröffentlicht. Der Workflow in `.github/wo
 ## Funktionen
 
 - Stimmungseinträge pro lokalem Kalenderdatum erfassen, bearbeiten und löschen
-- Optionale Energie-, Anspannungs- und Schlafqualitätsskalen sowie Notizen und Medikamentenänderungen
+- Direkte Auswahl optionaler Energie-, Anspannungs- und Schlafqualitätsskalen sowie Notizen und Medikamentenänderungen
 - Verlauf und navigierbarer Monatskalender
+- Zeitraumbezogene Statistiken mit lokal erzeugtem PDF-Bericht
+- Kurze Einführung beim ersten Aufruf
 - Deutsch, Französisch und Englisch
 - JSON-Export und -Import

@@ -38,3 +38,27 @@ test("mood scale and medication field are translated in all supported languages"
     assert.match(translations[language]["today.medicationsPlaceholder"], /\S/);
   }
 });
+
+test("scale guidance, first-run introduction, and PDF messages exist in all languages", () => {
+  for (const language of ["de", "fr", "en"]) {
+    for (const key of [
+      "scale.ratherLow",
+      "scale.ratherHigh",
+      "intro.title",
+      "intro.today",
+      "intro.history",
+      "intro.calendar",
+      "intro.stats",
+      "intro.settings",
+      "intro.dismiss",
+      "intro.close",
+      "stats.exportPdf",
+      "pdf.emptyPeriod",
+      "pdf.opened",
+      "pdf.downloaded",
+      "pdf.createFailed",
+    ]) {
+      assert.match(translations[language][key], /\S/, `${language}.${key} must be translated`);
+    }
+  }
+});
