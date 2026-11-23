@@ -130,6 +130,7 @@ export const translations = {
     "settings.confirmDelete": "Möchtest du diesen Eintrag endgültig löschen?",
     "settings.confirmDiscard": "Ungespeicherte Änderungen verwerfen und das ausgewählte Datum öffnen?",
     "settings.unsupportedFile": "Die Sicherungsdatei ist ungültig oder stammt aus einer nicht unterstützten Version.",
+    "settings.invalidJson": "Die Sicherungsdaten sind kein gültiges JSON.",
     "settings.invalidFile": "Die Sicherungsdatei ist beschädigt oder enthält ungültige Einträge.",
     "settings.importFailed": "Die Sicherung konnte nicht importiert werden. Deine vorhandenen Einträge wurden nicht geändert.",
     "settings.storageFailed": "Der lokale Speicher konnte nicht gelesen oder beschrieben werden. Prüfe den verfügbaren Speicherplatz und die Browser-Einstellungen.",
@@ -285,6 +286,7 @@ export const translations = {
     "settings.confirmDelete": "Voulez-vous supprimer définitivement cette entrée ?",
     "settings.confirmDiscard": "Abandonner les modifications non enregistrées et ouvrir la date choisie ?",
     "settings.unsupportedFile": "Le fichier de sauvegarde est invalide ou provient d’une version non prise en charge.",
+    "settings.invalidJson": "Les données de sauvegarde ne sont pas un JSON valide.",
     "settings.invalidFile": "Le fichier de sauvegarde est endommagé ou contient des entrées invalides.",
     "settings.importFailed": "La sauvegarde n’a pas pu être importée. Vos entrées existantes n’ont pas été modifiées.",
     "settings.storageFailed": "Le stockage local ne peut pas être lu ou écrit. Vérifiez l’espace disponible et les paramètres du navigateur.",
@@ -440,6 +442,7 @@ export const translations = {
     "settings.confirmDelete": "Do you want to permanently delete this entry?",
     "settings.confirmDiscard": "Discard unsaved changes and open the selected date?",
     "settings.unsupportedFile": "The backup file is invalid or comes from an unsupported version.",
+    "settings.invalidJson": "The backup data is not valid JSON.",
     "settings.invalidFile": "The backup file is damaged or contains invalid entries.",
     "settings.importFailed": "The backup could not be imported. Your existing entries were not changed.",
     "settings.storageFailed": "Local storage could not be read or written. Check available storage and browser settings.",
@@ -471,3 +474,14 @@ export const localeByLanguage = {
   fr: "fr-CH",
   en: "en",
 };
+
+export const SUPPORTED_LANGUAGES = Object.freeze(["de", "fr", "en"]);
+
+export function getPreferredLanguage(preferences = []) {
+  for (const preference of preferences) {
+    if (typeof preference !== "string") continue;
+    const language = preference.toLowerCase().split("-")[0];
+    if (SUPPORTED_LANGUAGES.includes(language)) return language;
+  }
+  return "de";
+}

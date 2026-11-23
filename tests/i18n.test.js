@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { translations } from "../src/i18n.js";
+import { getPreferredLanguage, translations } from "../src/i18n.js";
 
 test("German, French, and English contain the same non-empty UI messages", () => {
   const languages = Object.keys(translations);
@@ -61,4 +61,11 @@ test("scale guidance, first-run introduction, and PDF messages exist in all lang
       assert.match(translations[language][key], /\S/, `${language}.${key} must be translated`);
     }
   }
+});
+
+test("browser language preferences select the first supported language", () => {
+  assert.equal(getPreferredLanguage(["es-ES", "fr-FR", "en"]), "fr");
+  assert.equal(getPreferredLanguage(["en-US", "de-DE"]), "en");
+  assert.equal(getPreferredLanguage(["es-ES"]), "de");
+  assert.equal(getPreferredLanguage([]), "de");
 });
