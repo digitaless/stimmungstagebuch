@@ -122,10 +122,10 @@ test("rejects corrupted and unsupported stored data without replacing it", () =>
 });
 
 test("exports and imports a validated versioned backup with language", () => {
-  const serialized = serializeBackup([validEntry()], "en");
+  const serialized = serializeBackup([validEntry()], "it");
   assert.deepEqual(parseBackup(serialized), {
     entries: [validEntry()],
-    language: "en",
+    language: "it",
   });
   assert.throws(() => parseBackup("{invalid"), { code: "invalid_json" });
   assert.throws(
@@ -145,10 +145,17 @@ test("exports and imports a validated versioned backup with language", () => {
   assert.throws(
     () =>
       parseBackup(
-        JSON.stringify({ schemaVersion: 1, entries: [validEntry()], language: "it" }),
+        JSON.stringify({ schemaVersion: 1, entries: [validEntry()], language: "es" }),
       ),
     { code: "invalid_language" },
   );
+});
+
+test("diary store persists and reloads Italian as a supported language", () => {
+  const storage = fakeStorage();
+  const store = createDiaryStore(storage);
+  store.saveLanguage("it");
+  assert.equal(store.loadLanguage(), "it");
 });
 
 test("validates before confirmation, and cancellation leaves existing entries intact", () => {

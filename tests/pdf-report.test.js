@@ -52,6 +52,12 @@ test("creates a local A4 report with selected-period data and optional measures"
   assert.ok(!pdf.includes("PRIVATE_MEDICATION_SHOULD_NOT_APPEAR"));
 });
 
+test("creates PDF reports with Italian labels and date formatting", () => {
+  const report = createReport([entry("2024-01-05", 3)], "it");
+  assert.equal(report.lastAutoTable.body[0].cells["3"].text.join(" "), "Non registrato");
+  assert.match(report.output(), /^%PDF-/);
+});
+
 test("paginates long date ranges and rejects empty reports", () => {
   const entries = Array.from({ length: 180 }, (_, index) => {
     const date = new Date(Date.UTC(2024, 0, 1 + index)).toISOString().slice(0, 10);

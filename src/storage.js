@@ -1,3 +1,5 @@
+import { SUPPORTED_LANGUAGES } from "./i18n.js";
+
 export const ENTRIES_STORAGE_KEY = "stimmungstagebuch.entries.v1";
 export const LANGUAGE_STORAGE_KEY = "stimmungstagebuch.language.v1";
 export const DATA_VERSION = 1;
@@ -101,7 +103,7 @@ export function parseBackup(text) {
   const entries = validateEntries(backup.entries);
   let language;
   if (Object.hasOwn(backup, "language")) {
-    if (!["de", "fr", "en"].includes(backup.language)) {
+    if (!SUPPORTED_LANGUAGES.includes(backup.language)) {
       throw validationError("invalid_language");
     }
     language = backup.language;
@@ -114,7 +116,7 @@ export function serializeBackup(entries, language) {
     schemaVersion: DATA_VERSION,
     entries: validateEntries(entries),
   };
-  if (["de", "fr", "en"].includes(language)) backup.language = language;
+  if (SUPPORTED_LANGUAGES.includes(language)) backup.language = language;
   return JSON.stringify(backup, null, 2);
 }
 
@@ -175,11 +177,11 @@ export function createDiaryStore(storage) {
 
     loadLanguage() {
       const language = storage.getItem(LANGUAGE_STORAGE_KEY);
-      return ["de", "fr", "en"].includes(language) ? language : null;
+      return SUPPORTED_LANGUAGES.includes(language) ? language : null;
     },
 
     saveLanguage(language) {
-      if (!["de", "fr", "en"].includes(language)) {
+      if (!SUPPORTED_LANGUAGES.includes(language)) {
         throw validationError("invalid_language");
       }
       storage.setItem(LANGUAGE_STORAGE_KEY, language);
