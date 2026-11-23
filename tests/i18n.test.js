@@ -2,9 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { getPreferredLanguage, translations } from "../src/i18n.js";
 
-test("German, French, and English contain the same non-empty UI messages", () => {
+test("all supported languages contain the same non-empty UI messages", () => {
   const languages = Object.keys(translations);
-  assert.deepEqual(languages.sort(), ["de", "en", "fr"]);
+  assert.deepEqual(languages.sort(), ["de", "en", "fr", "it"]);
 
   const referenceKeys = Object.keys(translations.de).sort();
   for (const language of languages) {
@@ -27,6 +27,7 @@ test("mood scale and medication field are translated in all supported languages"
     ],
     fr: ["1 · Très mal", "2 · Plutôt mal", "3 · Moyen", "4 · Bien", "5 · Très bien"],
     en: ["1 · Very bad", "2 · Rather bad", "3 · Medium", "4 · Good", "5 · Very good"],
+    it: ["1 · Molto male", "2 · Abbastanza male", "3 · Così così", "4 · Bene", "5 · Molto bene"],
   };
 
   for (const [language, labels] of Object.entries(expectedMoodLabels)) {
@@ -40,7 +41,7 @@ test("mood scale and medication field are translated in all supported languages"
 });
 
 test("scale guidance, first-run introduction, and PDF messages exist in all languages", () => {
-  for (const language of ["de", "fr", "en"]) {
+  for (const language of Object.keys(translations)) {
     for (const key of [
       "scale.ratherLow",
       "scale.ratherHigh",
@@ -64,6 +65,7 @@ test("scale guidance, first-run introduction, and PDF messages exist in all lang
 });
 
 test("browser language preferences select the first supported language", () => {
+  assert.equal(getPreferredLanguage(["es-ES", "it-IT", "fr"]), "it");
   assert.equal(getPreferredLanguage(["es-ES", "fr-FR", "en"]), "fr");
   assert.equal(getPreferredLanguage(["en-US", "de-DE"]), "en");
   assert.equal(getPreferredLanguage(["es-ES"]), "de");
