@@ -13,6 +13,7 @@ import {
 } from "./statistics.js";
 import { createMoodReport, presentPdfReport } from "./pdf-report.js";
 import { hasDismissedIntro, saveIntroDismissal } from "./onboarding.js";
+import { getPreferredLanguage } from "./i18n.js";
 
 const viewIds = ["today", "history", "calendar", "stats", "settings"];
 const weekdayKeys = [
@@ -101,10 +102,20 @@ export function initializeApp({ translations, localeByLanguage }) {
     store = createDiaryStore(window.localStorage);
     entries = store.loadEntries();
     storageReady = true;
-    language = store.loadLanguage() ?? language;
+    language =
+      store.loadLanguage() ??
+      getPreferredLanguage([
+        ...(navigator.languages ?? []),
+        navigator.language,
+      ]);
     languageSelect.value = language;
   } catch (error) {
     storageReady = false;
+    language = getPreferredLanguage([
+      ...(navigator.languages ?? []),
+      navigator.language,
+    ]);
+    languageSelect.value = language;
     showAppMessage(
       error?.code === "corrupt_storage" || error?.code === "unsupported_version"
         ? "settings.storageCorrupt"
@@ -781,6 +792,7 @@ export function initializeApp({ translations, localeByLanguage }) {
 
   function importErrorKey(error) {
     if (error?.code === "unsupported_version") return "settings.unsupportedFile";
+    if (error?.code === "invalid_json") return "settings.invalidJson";
     if (error?.code?.startsWith("invalid_") || error?.code?.startsWith("duplicate_")) {
       return "settings.invalidFile";
     }
